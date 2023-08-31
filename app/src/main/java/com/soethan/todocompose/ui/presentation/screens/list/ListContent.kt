@@ -1,4 +1,4 @@
-package com.soethan.todocompose.ui.presentation.list
+package com.soethan.todocompose.ui.presentation.screens.list
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background

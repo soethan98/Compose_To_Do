@@ -1,4 +1,4 @@
-package com.soethan.todocompose.ui.presentation.list
+package com.soethan.todocompose.ui.presentation.screens.list
 
 import android.graphics.drawable.Icon
 import androidx.compose.foundation.layout.fillMaxWidth

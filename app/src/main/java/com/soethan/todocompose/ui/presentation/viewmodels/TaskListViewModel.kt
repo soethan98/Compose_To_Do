@@ -1,11 +1,10 @@
-package com.soethan.todocompose.ui.presentation
+package com.soethan.todocompose.ui.presentation.viewmodels
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.soethan.todocompose.data.models.ToDoTask
 import com.soethan.todocompose.data.repositories.ToDoRepository
 import com.soethan.todocompose.util.Resource
@@ -13,12 +12,11 @@ import com.soethan.todocompose.util.SearchAppBarState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SharedViewModel @Inject constructor(private val repository: ToDoRepository) : ViewModel() {
+class TaskListViewModel @Inject constructor(private val repository: ToDoRepository) : ViewModel() {
     private val _searchAppBarState: MutableState<SearchAppBarState> =
         mutableStateOf(SearchAppBarState.CLOSED)
     val searchAppBarState: State<SearchAppBarState> = _searchAppBarState
@@ -35,9 +33,14 @@ class SharedViewModel @Inject constructor(private val repository: ToDoRepository
 
     private fun getAllTasks() {
         viewModelScope.launch {
-            repository.getAllTasks.collect {
-                _allTasks.value = Resource.Success(it)
+            try {
+                repository.getAllTasks.collect {
+                    _allTasks.value = Resource.Success(it)
+                }
+            } catch (e: Exception) {
+                _allTasks.value = Resource.Error(e)
             }
+
         }
     }
 

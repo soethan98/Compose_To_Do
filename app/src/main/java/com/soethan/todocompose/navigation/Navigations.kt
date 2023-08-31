@@ -7,8 +7,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.soethan.todocompose.ui.presentation.DetailScreen
-import com.soethan.todocompose.ui.presentation.list.ListScreen
+import com.soethan.todocompose.ui.presentation.screens.list.ListScreen
+import com.soethan.todocompose.ui.presentation.screens.task.TaskScreen
 
 @Composable
 fun ToDoNavigation(navController: NavHostController = rememberNavController()) {
@@ -27,12 +27,13 @@ fun ToDoNavigation(navController: NavHostController = rememberNavController()) {
             arguments = listOf(
                 navArgument("taskId") { type = NavType.IntType; nullable = false },
             )
-        ) {
-            DetailScreen { action ->
+        ) { navBackStackEntry ->
+            val taskId = navBackStackEntry.arguments!!.getInt("taskId")
+            TaskScreen(taskId = taskId, onNavigateBackToList = { action ->
                 navController.navigate(route = "list/${action.name}") {
                     popUpTo(Screens.List.route) { inclusive = true }
                 }
-            }
+            })
         }
     }
 }

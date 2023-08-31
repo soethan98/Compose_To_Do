@@ -1,7 +1,5 @@
-package com.soethan.todocompose.ui.presentation.list
+package com.soethan.todocompose.ui.presentation.screens.list
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ExperimentalMaterialApi
@@ -13,22 +11,20 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ExperimentalComposeApi
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModel
 import com.soethan.todocompose.R
-import com.soethan.todocompose.ui.presentation.SharedViewModel
+import com.soethan.todocompose.ui.presentation.viewmodels.TaskListViewModel
 import com.soethan.todocompose.ui.theme.fabBackgroundColor
 import com.soethan.todocompose.util.SearchAppBarState
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ListScreen(onNavigateToDetail: (Int) -> Unit, viewModel: SharedViewModel = hiltViewModel()) {
+fun ListScreen(onNavigateToDetail: (Int) -> Unit, viewModel: TaskListViewModel = hiltViewModel()) {
 
     val searchAppBarState: SearchAppBarState
             by viewModel.searchAppBarState
