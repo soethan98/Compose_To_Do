@@ -36,6 +36,9 @@ fun ListScreen(
     val searchTextState: String by viewModel.searchTextState
     val allTasks by viewModel.allTask.collectAsState()
     val searchedTasks by viewModel.searchedTasks.collectAsState()
+    val sortState by viewModel.sortState.collectAsState()
+    val lowPriorityTasks by viewModel.lowPriorityTasks.collectAsState()
+    val highPriorityTasks by viewModel.highPriorityTasks.collectAsState()
 
     Scaffold(topBar = {
         ListAppBar(
@@ -43,6 +46,12 @@ fun ListScreen(
             onUpdateSearchAppBarState = { state -> viewModel.updateSearchAppBarState(state) },
             onSearchTextChange = { value -> viewModel.updateSearchTextState(value) },
             searchTextState = searchTextState,
+            onSortChange = {
+                viewModel.persistSortState(it)
+            },
+            onDeleteClicked = {
+                viewModel.deleteAllTasks()
+            },
             onSearchClicked = { query ->
                 viewModel.searchDatabase(query)
             }
@@ -55,8 +64,8 @@ fun ListScreen(
             tasks = allTasks,
             searchAppBarState = searchAppBarState,
             searchedTasks = searchedTasks,
-            highPriorityTasks = emptyList(),
-            lowPriorityTasks = emptyList(),
+            highPriorityTasks = highPriorityTasks,
+            lowPriorityTasks = lowPriorityTasks,
             sortState = Resource.Success(Priority.NONE),
             navigateToTaskScreen = { taskId: Int ->
                 onNavigateToDetail(taskId)

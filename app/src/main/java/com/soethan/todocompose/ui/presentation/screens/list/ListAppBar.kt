@@ -52,7 +52,9 @@ fun ListAppBar(
     onUpdateSearchAppBarState: (SearchAppBarState) -> Unit,
     onSearchTextChange: (String) -> Unit,
     searchTextState: String,
-    onSearchClicked: (String) -> Unit
+    onSearchClicked: (String) -> Unit,
+    onSortChange: (Priority) -> Unit,
+    onDeleteClicked: () -> Unit
 ) {
     when (searchAppBarState) {
         SearchAppBarState.CLOSED -> {
@@ -60,8 +62,8 @@ fun ListAppBar(
                 onSearchClick = {
                     onUpdateSearchAppBarState(SearchAppBarState.OPENED)
                 },
-                onSortClicked = {},
-                onDeleteClicked = {})
+                onSortClicked = onSortChange,
+                onDeleteClicked = onDeleteClicked)
         }
 
         else -> {
