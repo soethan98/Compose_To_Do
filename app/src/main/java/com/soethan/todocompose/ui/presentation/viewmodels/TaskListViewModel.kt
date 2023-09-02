@@ -45,7 +45,6 @@ class TaskListViewModel @Inject constructor(
 
     init {
         getAllTasks()
-//        readSortState()
     }
 
     val lowPriorityTasks: StateFlow<List<ToDoTask>> =
@@ -88,7 +87,7 @@ class TaskListViewModel @Inject constructor(
         }
     }
 
-    fun deleteAllTasks(){
+    fun deleteAllTasks() {
         viewModelScope.launch(Dispatchers.IO) {
             repository.deleteAllTasks()
         }
@@ -100,6 +99,8 @@ class TaskListViewModel @Inject constructor(
                 repository.getAllTasks.collect {
                     _allTasks.value = Resource.Success(it)
                 }
+
+
             } catch (e: Exception) {
                 _allTasks.value = Resource.Error(e)
             }

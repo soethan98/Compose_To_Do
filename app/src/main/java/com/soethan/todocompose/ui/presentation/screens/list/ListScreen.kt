@@ -1,5 +1,6 @@
 package com.soethan.todocompose.ui.presentation.screens.list
 
+import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ExperimentalMaterialApi
@@ -11,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -31,6 +33,10 @@ fun ListScreen(
     viewModel: TaskListViewModel = hiltViewModel()
 ) {
 
+    LaunchedEffect(key1 = true){
+        viewModel.readSortState()
+    }
+
     val searchAppBarState: SearchAppBarState
             by viewModel.searchAppBarState
     val searchTextState: String by viewModel.searchTextState
@@ -39,6 +45,8 @@ fun ListScreen(
     val sortState by viewModel.sortState.collectAsState()
     val lowPriorityTasks by viewModel.lowPriorityTasks.collectAsState()
     val highPriorityTasks by viewModel.highPriorityTasks.collectAsState()
+
+    Log.d("ListScreen", "ListScreen: $sortState ")
 
     Scaffold(topBar = {
         ListAppBar(
@@ -66,7 +74,7 @@ fun ListScreen(
             searchedTasks = searchedTasks,
             highPriorityTasks = highPriorityTasks,
             lowPriorityTasks = lowPriorityTasks,
-            sortState = Resource.Success(Priority.NONE),
+            sortState = sortState,
             navigateToTaskScreen = { taskId: Int ->
                 onNavigateToDetail(taskId)
             }
