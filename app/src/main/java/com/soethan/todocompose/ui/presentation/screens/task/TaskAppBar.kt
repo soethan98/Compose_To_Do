@@ -11,16 +11,21 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.soethan.todocompose.R
 import com.soethan.todocompose.data.models.Priority
 import com.soethan.todocompose.data.models.ToDoTask
+import com.soethan.todocompose.ui.presentation.components.DisplayAlertDialog
 import com.soethan.todocompose.ui.theme.topAppBarBackgroundColor
 import com.soethan.todocompose.ui.theme.topAppBarContentColor
 import com.soethan.todocompose.util.Action
-
 
 
 @Composable
@@ -76,10 +81,37 @@ fun ExistingTaskAppBar(
             )
         }, backgroundColor = MaterialTheme.colors.topAppBarBackgroundColor,
         actions = {
-            DeleteAction(onDeleteClicked = navigateToListScreen)
-            UpdateAction(onUpdatedClick = navigateToListScreen)
+            ExistingTaskAppBarActions(
+                selectedTask = selectedTask,
+                navigateToListScreen = navigateToListScreen
+            )
         }
     )
+}
+
+
+@Composable
+fun ExistingTaskAppBarActions(
+    selectedTask: ToDoTask,
+    navigateToListScreen: (Action) -> Unit
+) {
+    var openDialog by remember { mutableStateOf(false) }
+
+    DisplayAlertDialog(
+        title = stringResource(
+            id = R.string.delete_task,
+            selectedTask.title
+        ),
+        message = stringResource(
+            id = R.string.delete_task_confirmation,
+            selectedTask.title
+        ),
+        openDialog = openDialog,
+        closeDialog = { openDialog = false },
+        onYesClicked = { navigateToListScreen(Action.DELETE) }
+    )
+    DeleteAction(onDeleteClicked = { openDialog = true })
+    UpdateAction(onUpdatedClick = navigateToListScreen)
 }
 
 @Composable
@@ -132,7 +164,6 @@ fun AddAction(
         )
     }
 }
-
 
 
 @Composable

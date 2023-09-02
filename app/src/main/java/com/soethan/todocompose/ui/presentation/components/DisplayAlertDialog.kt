@@ -19,20 +19,25 @@ fun DisplayAlertDialog(
     onYesClicked: () -> Unit
 ) {
     if (openDialog) {
-        AlertDialog(onDismissRequest = { closeDialog() }, buttons = {
-            Button(
-                onClick = {
-                    onYesClicked()
-                    closeDialog()
-                })
-            {
-                Text(text = "Yes")
-            }
-            OutlinedButton(onClick = { closeDialog() })
-            {
-                Text(text = "No")
-            }
-        },
+        AlertDialog(
+            confirmButton = {
+                Button(
+                    onClick = {
+                        onYesClicked()
+                        closeDialog()
+                    })
+                {
+                    Text(text = stringResource(id = R.string.yes))
+                }
+            },
+            dismissButton = {
+                OutlinedButton(onClick = { closeDialog() })
+                {
+                    Text(text = stringResource(id = R.string.no))
+                }
+            },
+
+            onDismissRequest = { closeDialog() },
             title = {
                 Text(
                     text = title,
