@@ -18,25 +18,34 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.soethan.todocompose.R
+import com.soethan.todocompose.data.models.Priority
 import com.soethan.todocompose.ui.presentation.viewmodels.TaskListViewModel
 import com.soethan.todocompose.ui.theme.fabBackgroundColor
+import com.soethan.todocompose.util.Resource
 import com.soethan.todocompose.util.SearchAppBarState
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ListScreen(onNavigateToDetail: (Int) -> Unit, viewModel: TaskListViewModel = hiltViewModel()) {
+fun ListScreen(
+    onNavigateToDetail: (Int) -> Unit,
+    viewModel: TaskListViewModel = hiltViewModel()
+) {
 
     val searchAppBarState: SearchAppBarState
             by viewModel.searchAppBarState
     val searchTextState: String by viewModel.searchTextState
     val allTasks by viewModel.allTask.collectAsState()
+    val searchedTasks by viewModel.searchedTasks.collectAsState()
 
     Scaffold(topBar = {
         ListAppBar(
             searchAppBarState = searchAppBarState,
             onUpdateSearchAppBarState = { state -> viewModel.updateSearchAppBarState(state) },
             onSearchTextChange = { value -> viewModel.updateSearchTextState(value) },
-            searchTextState = searchTextState
+            searchTextState = searchTextState,
+            onSearchClicked = { query ->
+                viewModel.searchDatabase(query)
+            }
         )
     }, floatingActionButton = {
         ListFab(onFabClicked = onNavigateToDetail)
@@ -44,6 +53,11 @@ fun ListScreen(onNavigateToDetail: (Int) -> Unit, viewModel: TaskListViewModel =
         ListContent(
             modifier = Modifier.padding(paddingValues),
             tasks = allTasks,
+            searchAppBarState = searchAppBarState,
+            searchedTasks = searchedTasks,
+            highPriorityTasks = emptyList(),
+            lowPriorityTasks = emptyList(),
+            sortState = Resource.Success(Priority.NONE),
             navigateToTaskScreen = { taskId: Int ->
                 onNavigateToDetail(taskId)
             }

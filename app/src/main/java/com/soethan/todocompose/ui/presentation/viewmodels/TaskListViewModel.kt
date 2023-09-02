@@ -27,6 +27,12 @@ class TaskListViewModel @Inject constructor(private val repository: ToDoReposito
     private val _allTasks = MutableStateFlow<Resource<List<ToDoTask>>>(Resource.Idle)
     val allTask: StateFlow<Resource<List<ToDoTask>>> get() = _allTasks
 
+
+    private val _searchedTasks =
+        MutableStateFlow<Resource<List<ToDoTask>>>(Resource.Idle)
+    val searchedTasks: StateFlow<Resource<List<ToDoTask>>> get() = _searchedTasks
+
+
     init {
         getAllTasks()
     }
@@ -42,6 +48,22 @@ class TaskListViewModel @Inject constructor(private val repository: ToDoReposito
             }
 
         }
+    }
+
+
+    fun searchDatabase(searchQuery: String) {
+        _searchedTasks.value = Resource.Loading
+        try {
+            viewModelScope.launch {
+                repository.searchDatabase(searchQuery = "%$searchQuery%")
+                    .collect { searchedTasks ->
+                        _searchedTasks.value = Resource.Success(searchedTasks)
+                    }
+            }
+        } catch (e: Exception) {
+            _searchedTasks.value = Resource.Error(e)
+        }
+        _searchAppBarState.value = SearchAppBarState.TRIGGERED
     }
 
 

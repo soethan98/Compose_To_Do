@@ -29,25 +29,73 @@ import com.soethan.todocompose.ui.theme.PRIORITY_INDICATOR_SIZE
 import com.soethan.todocompose.ui.theme.taskItemBackgroundColor
 import com.soethan.todocompose.ui.theme.taskItemTextColor
 import com.soethan.todocompose.util.Resource
+import com.soethan.todocompose.util.SearchAppBarState
 
 
 @ExperimentalMaterialApi
 @Composable
 fun ListContent(
     tasks: Resource<List<ToDoTask>>,
+    searchedTasks: Resource<List<ToDoTask>>,
+    searchAppBarState: SearchAppBarState,
+    lowPriorityTasks: List<ToDoTask>,
+    highPriorityTasks: List<ToDoTask>,
+    sortState: Resource<Priority>,
     navigateToTaskScreen: (taskId: Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
-    if (tasks is Resource.Success) {
-        if (tasks.data.isEmpty()) {
-            EmptyContent()
-        } else {
-            DisplayTasks(
-                tasks = tasks.data,
-                navigateToTaskScreen = navigateToTaskScreen
-            )
+    if (sortState is Resource.Success) {
+        when {
+            searchAppBarState == SearchAppBarState.TRIGGERED -> {
+                if (searchedTasks is Resource.Success) {
+                    HandleListContent(
+                        tasks = searchedTasks.data,
+                        navigateToTaskScreen = navigateToTaskScreen
+                    )
+                }
+            }
+
+            sortState.data == Priority.NONE -> {
+                if (tasks is Resource.Success) {
+                    HandleListContent(
+                        tasks = tasks.data,
+                        navigateToTaskScreen = navigateToTaskScreen
+                    )
+                }
+            }
+
+            sortState.data == Priority.LOW -> {
+                HandleListContent(
+                    tasks = lowPriorityTasks,
+                    navigateToTaskScreen = navigateToTaskScreen
+                )
+            }
+
+            sortState.data == Priority.HIGH -> {
+                HandleListContent(
+                    tasks = highPriorityTasks,
+                    navigateToTaskScreen = navigateToTaskScreen
+                )
+            }
         }
+    }
+}
+
+
+@ExperimentalMaterialApi
+@Composable
+fun HandleListContent(
+    tasks: List<ToDoTask>,
+    navigateToTaskScreen: (taskId: Int) -> Unit
+) {
+    if (tasks.isEmpty()) {
+        EmptyContent()
+    } else {
+        DisplayTasks(
+            tasks = tasks,
+            navigateToTaskScreen = navigateToTaskScreen
+        )
     }
 }
 
