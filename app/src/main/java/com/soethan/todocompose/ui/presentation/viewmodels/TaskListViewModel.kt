@@ -133,4 +133,13 @@ class TaskListViewModel @Inject constructor(
         _searchTextState.value = state
     }
 
+
+     fun deleteTask(toDoTask: ToDoTask) {
+        viewModelScope.launch(Dispatchers.IO) {
+
+            repository.deleteTask(toDoTask = toDoTask)
+        }
+    }
+
+
 }

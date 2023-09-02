@@ -33,7 +33,7 @@ fun ListScreen(
     viewModel: TaskListViewModel = hiltViewModel()
 ) {
 
-    LaunchedEffect(key1 = true){
+    LaunchedEffect(key1 = true) {
         viewModel.readSortState()
     }
 
@@ -75,6 +75,9 @@ fun ListScreen(
             highPriorityTasks = highPriorityTasks,
             lowPriorityTasks = lowPriorityTasks,
             sortState = sortState,
+            onSwipeToDelete = { action, toDoTask ->
+                viewModel.deleteTask(toDoTask)
+            },
             navigateToTaskScreen = { taskId: Int ->
                 onNavigateToDetail(taskId)
             }
