@@ -111,6 +111,8 @@ fun ListContent(
                 )
             }
         }
+    }else if (sortState is Resource.Error){
+
     }
 }
 

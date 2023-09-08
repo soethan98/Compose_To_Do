@@ -14,6 +14,7 @@ import com.soethan.todocompose.util.Resource
 import com.soethan.todocompose.util.SearchAppBarState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -47,19 +48,21 @@ class TaskListViewModel @Inject constructor(
         getAllTasks()
     }
 
-    val lowPriorityTasks: StateFlow<List<ToDoTask>> =
-        repository.sortByLowPriority.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(),
-            initialValue = emptyList()
-        )
+    val lowPriorityTasks: StateFlow<List<ToDoTask>>
+        get() =
+            repository.sortByLowPriority.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(),
+                initialValue = emptyList()
+            )
 
-    val highPriorityTasks: StateFlow<List<ToDoTask>> =
-        repository.sortByHighPriority.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(),
-            initialValue = emptyList()
-        )
+    val highPriorityTasks: StateFlow<List<ToDoTask>>
+        get() =
+            repository.sortByHighPriority.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(),
+                initialValue = emptyList()
+            )
 
     private val _sortState =
         MutableStateFlow<Resource<Priority>>(Resource.Idle)
@@ -68,22 +71,32 @@ class TaskListViewModel @Inject constructor(
 
     fun persistSortState(priority: Priority) {
         viewModelScope.launch {
-            dataStoreRepository.persistSortState(priority = priority)
+            try {
+                dataStoreRepository.persistSortState(priority = priority)
+
+            } catch (e: Exception) {
+                /// Handle error
+            }
         }
+    }
+
+    override fun toString(): String {
+        return super.toString()
     }
 
     fun readSortState() {
         _sortState.value = Resource.Loading
-        try {
-            viewModelScope.launch {
-                dataStoreRepository.readSortState
+        viewModelScope.launch {
+            try {
+                dataStoreRepository.readSortState()
                     .map { Priority.valueOf(it) }
                     .collect {
                         _sortState.value = Resource.Success(it)
                     }
+            } catch (e: Exception) {
+                _sortState.value = Resource.Error(e)
+
             }
-        } catch (e: Exception) {
-            _sortState.value = Resource.Error(e)
         }
     }
 
@@ -93,14 +106,15 @@ class TaskListViewModel @Inject constructor(
         }
     }
 
-    private fun getAllTasks() {
+    fun getAllTasks() {
+        _allTasks.value = Resource.Loading
         viewModelScope.launch {
+            /// TODO: remove only for testing purpose
+            delay(1000L)
             try {
                 repository.getAllTasks.collect {
                     _allTasks.value = Resource.Success(it)
                 }
-
-
             } catch (e: Exception) {
                 _allTasks.value = Resource.Error(e)
             }
@@ -111,15 +125,15 @@ class TaskListViewModel @Inject constructor(
 
     fun searchDatabase(searchQuery: String) {
         _searchedTasks.value = Resource.Loading
-        try {
-            viewModelScope.launch {
+        viewModelScope.launch {
+            try {
                 repository.searchDatabase(searchQuery = "%$searchQuery%")
                     .collect { searchedTasks ->
                         _searchedTasks.value = Resource.Success(searchedTasks)
                     }
+            } catch (e: Exception) {
+                _searchedTasks.value = Resource.Error(e)
             }
-        } catch (e: Exception) {
-            _searchedTasks.value = Resource.Error(e)
         }
         _searchAppBarState.value = SearchAppBarState.TRIGGERED
     }
@@ -134,9 +148,8 @@ class TaskListViewModel @Inject constructor(
     }
 
 
-     fun deleteTask(toDoTask: ToDoTask) {
+    fun deleteTask(toDoTask: ToDoTask) {
         viewModelScope.launch(Dispatchers.IO) {
-
             repository.deleteTask(toDoTask = toDoTask)
         }
     }

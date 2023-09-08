@@ -9,9 +9,9 @@ import javax.inject.Inject
 @ViewModelScoped
 class ToDoRepository @Inject constructor(private val toDoDao: ToDoDao) {
 
-    val getAllTasks: Flow<List<ToDoTask>> = toDoDao.getAllTasks()
-    val sortByLowPriority: Flow<List<ToDoTask>> = toDoDao.sortByLowPriority()
-    val sortByHighPriority: Flow<List<ToDoTask>> = toDoDao.sortByHighPriority()
+    val getAllTasks: Flow<List<ToDoTask>> get() = toDoDao.getAllTasks()
+    val sortByLowPriority: Flow<List<ToDoTask>> get() = toDoDao.sortByLowPriority()
+    val sortByHighPriority: Flow<List<ToDoTask>> get()  = toDoDao.sortByHighPriority()
 
     fun getSelectedTask(taskId: Int): Flow<ToDoTask> {
         return toDoDao.getSelectedTask(taskId = taskId)
