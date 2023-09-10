@@ -18,6 +18,7 @@ import io.mockk.mockk
 import io.mockk.slot
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
@@ -213,4 +214,36 @@ class TaskListViewModelTest {
         }
     }
 
+    @Test
+    fun `lowPriorityTasksReceiveCorrect_task_from_repository`() {
+        runTest {
+            val sortedTaskList = tasks.sortedByDescending { it.priority.ordinal }
+            every { todoRepository.sortByLowPriority } returns flow {
+                emit(sortedTaskList)
+            }
+
+            assertEquals(sut.lowPriorityTasks.value, emptyList<ToDoTask>())
+
+            sut.lowPriorityTasks.test {
+               assertEquals(sortedTaskList,awaitItem())
+            }
+        }
+    }
+
+
+    @Test
+    fun `highPriorityTasksReceiveCorrect_task_from_repository`() {
+        runTest {
+            val sortedTaskList = tasks.sortedBy { it.priority.ordinal }
+            every { todoRepository.sortByHighPriority } returns flow {
+                emit(sortedTaskList)
+            }
+
+            assertEquals(sut.highPriorityTasks.value, emptyList<ToDoTask>())
+
+            sut.highPriorityTasks.test {
+                assertEquals(sortedTaskList,awaitItem())
+            }
+        }
+    }
 }
