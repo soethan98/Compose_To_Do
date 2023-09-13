@@ -10,6 +10,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.rememberScaffoldState
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -32,10 +33,7 @@ fun ListScreen(
     onNavigateToDetail: (Int) -> Unit,
     viewModel: TaskListViewModel = hiltViewModel()
 ) {
-
-    LaunchedEffect(key1 = true) {
-        viewModel.readSortState()
-    }
+    val scaffoldState = rememberScaffoldState()
 
     val searchAppBarState: SearchAppBarState
             by viewModel.searchAppBarState
@@ -48,7 +46,22 @@ fun ListScreen(
 
     Log.d("ListScreen", "ListScreen: $sortState ")
 
-    Scaffold(topBar = {
+    LaunchedEffect(key1 = true) {
+        viewModel.readSortState()
+    }
+    LaunchedEffect(sortState) {
+        if (sortState is Resource.Error) {
+            scaffoldState.snackbarHostState.showSnackbar(
+                message = "Error caught",
+                actionLabel = "Dismiss"
+            )
+        }
+    }
+
+
+    Scaffold(
+        scaffoldState = scaffoldState,
+        topBar = {
         ListAppBar(
             searchAppBarState = searchAppBarState,
             onUpdateSearchAppBarState = { state -> viewModel.updateSearchAppBarState(state) },

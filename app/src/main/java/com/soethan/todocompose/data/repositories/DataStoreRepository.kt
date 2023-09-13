@@ -35,15 +35,15 @@ class DataStoreRepository @Inject constructor(@ApplicationContext private val co
         }
     }
 
-    val readSortState: Flow<String> = dataStore.data.catch { exception ->
-        if (exception is IOException) {
-            emit(emptyPreferences())
-        } else {
-            throw exception
+    fun readSortState(): Flow<String> = dataStore.data.catch { exception ->
+            if (exception is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }.map { preferences ->
+            val sortState = preferences[PreferenceKeys.sortKey] ?: Priority.NONE.name
+            sortState
         }
-    }.map { preferences ->
-        val sortState = preferences[PreferenceKeys.sortKey] ?: Priority.NONE.name
-        sortState
-    }
 
 }
