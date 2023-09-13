@@ -1,0 +1,15 @@
+name: Build Debug APK
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Tag
+        id: check_tag
+        run: echo "${{ github.ref_name }}"
