@@ -13,3 +13,15 @@ jobs:
       - name: Check Tag
         id: check_tag
         run: echo "${{ github.ref_name }}"
+
+      - name: Check Tag Prefix
+        id: check_tag_prefix
+        run: | 
+          if [[ "${{ steps.check_tag.outputs.check_tag }}" == v* ]]; then
+            echo "Tag starts with 'v', continue with the workflow"
+          else
+            echo "Tag does not start with 'v', existing workflow"
+            exit 1
+          fi
+      - name: Echo Hello world
+        run: echo "Hello world"
