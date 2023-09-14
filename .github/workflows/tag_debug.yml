@@ -39,4 +39,9 @@ jobs:
           java-version: '18'
       - name: Build Debug Apk
         run: ./gradlew assembleDebug
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: app.apk
+          path: app/build/outputs/apk/debug/app-debug.apk
 
