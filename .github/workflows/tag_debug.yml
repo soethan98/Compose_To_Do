@@ -35,6 +35,7 @@ jobs:
       - name: Setup JDK
         uses: actions/setup-java@v3
         with:
+          distribution: 'temurin'
           java-version: '17'
       - name: Build Debug Apk
         run: ./gradlew assembleDebug
