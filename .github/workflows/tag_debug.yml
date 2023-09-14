@@ -7,7 +7,7 @@ on:
       - 'v*'
 
 jobs:
-  build:
+  validate_tag:
     runs-on: ubuntu-latest
     steps:
       - name: Check Tag
@@ -25,3 +25,17 @@ jobs:
           fi
       - name: Echo Hello world
         run: echo "Hello world"
+
+  build:
+      runs-on: ubuntu-latest
+      steps:
+
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+      - name: Build Debug Apk
+        run: ./gradlew assembleDebug
+
