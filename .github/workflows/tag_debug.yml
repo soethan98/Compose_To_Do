@@ -23,8 +23,6 @@ jobs:
             echo "Tag does not start with 'v', existing workflow"
             exit 1
           fi
-      - name: Echo Hello world
-        run: echo "Hello world"
 
   build:
       runs-on: ubuntu-latest
@@ -48,4 +46,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: app/build/outputs/apk/debug/app-debug.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
