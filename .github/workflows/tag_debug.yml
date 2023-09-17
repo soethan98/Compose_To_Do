@@ -12,6 +12,7 @@ jobs:
 
   build:
     needs: validate_tag
+    continue-on-error: true
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
